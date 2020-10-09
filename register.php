@@ -105,11 +105,17 @@ if (isset($_POST['register_button'])){
 
 		$i = 0;
 		//if username exists add number to username
-		while(mysqli_num_rows($check_username_query) != 0) {
-			$i++;
-			$username = $username . "+" . $i;
-			$check_username_query = mysqli_query($con, "SELECT username FROM users WHERE username='$username'");
+		if (!empty($check_username_query)){
+			$temp_username = $username;
+			while(mysqli_num_rows($check_username_query) != 0) {
+				//$i++;
+				//$username = $username . "_" . $i;
+				$temp_username = $username . "_" . $i++;
+				$check_username_query = mysqli_query($con, "SELECT username FROM users WHERE username='$temp_username'");
+			}
+			$username = $temp_username;
 		}
+		
 
 		//Profile picture assignment
 		$rand = rand(1, 2);
@@ -120,7 +126,15 @@ if (isset($_POST['register_button'])){
 			$profile_pic = "assets/images/profile_pics/defaults/head_green_sea.png";
 
 
+		$query = mysqli_query($con, "INSERT INTO users VALUES ('', '$fname', '$lname', '$username', '$em', '$password', '$date', '$profile_pic', '0', '0', 'no', ',')");
 
+		array_push($error_array, "<span style='color: #14C800;'> You're all set! Goahead and login! </span><br>");
+
+		//Clear session variables
+		$_SESSION['reg_fname'] = "";
+		$_SESSION['reg_lname'] = "";
+		$_SESSION['reg_email'] = "";
+		$_SESSION['reg_email2'] = "";
 	}
 
 
@@ -182,6 +196,9 @@ if (isset($_POST['register_button'])){
 		else if(in_array("Your password can only contain English chars or nums<br>", $error_array)) echo "Your password can only contain English chars or nums<br>"; ?>
 
 		<input type="submit" name="register_button" value="Register">
+		<?php if(in_array("<span style='color: #14C800;'> You're all set! Goahead and login! </span><br>", $error_array)) echo "<span style='color: #14C800;'> You're all set! Go ahead and login! </span><br>"; 
+		?>
+
 
 	</form>
 
