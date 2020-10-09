@@ -1,6 +1,7 @@
 <?php
 $dbname = "socialnetwork";
 $tablename = "test";
+
 $con = mysqli_connect("localhost", "root", "", $dbname);
 
 if (mysqli_connect_errno()) {
